@@ -53,7 +53,6 @@
         <property name="securityManager" ref="securityManager"/>
 <!--        身份认证失败，跳转到登录页面的配置-->
         <property name="loginUrl" value="/Login.jsp"/>
-        
         <property name="filterChainDefinitions">
             <value>
                 /login=anon
@@ -68,4 +67,33 @@
     <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
         <property name="securityManager" ref="securityManager"/>
     </bean>
+<!--配置事务的通知属性-->
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+<!--        定义事务传播属性-->
+        <tx:attributes>
+            <tx:method name="insert*" propagation="REQUIRED"/>
+            <tx:method name="update*" propagation="REQUIRED"/>
+            <tx:method name="edit*" propagation="REQUIRED"/>
+            <tx:method name="save*" propagation="REQUIRED"/>
+            <tx:method name="add*" propagation="REQUIRED"/>
+            <tx:method name="new*" propagation="REQUIRED"/>
+            <tx:method name="set*" propagation="REQUIRED"/>
+            <tx:method name="remove*" propagation="REQUIRED"/>
+            <tx:method name="delete*" propagation="REQUIRED"/>
+            <tx:method name="change*" propagation="REQUIRED"/>
+            <tx:method name="check*" propagation="REQUIRED"/>
+            <tx:method name="get*" propagation="REQUIRED" read-only="true"/>
+            <tx:method name="find*" propagation="REQUIRED" read-only="true"/>
+            <tx:method name="load*" propagation="REQUIRED" read-only="true"/>
+            <tx:method name="*" propagation="REQUIRED" read-only="true"/>
+        </tx:attributes>
+    </tx:advice>
+<!--    配置事务切面-->
+    <aop:config>
+        <aop:pointcut id="serviceOperation" expression="execution(* com.blog.service.*.*(..))"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="serviceOperation"/>
+    </aop:config>
+<!--    配置自动扫描service-->
+    <context:component-scan base-package="com.blog.service"/>
+
 </beans>
